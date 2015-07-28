@@ -1,8 +1,20 @@
 VAGRANTFILE_API_VERSION = "2"                                          
                                                                        
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|                 
-                                                                       
-  # Every Vagrant virtual environment requires a box to build off of.  
-  config.vm.box = "ubuntu/trusty64"                                    
-  config.vm.provision :shell, path: "bootstrap.sh"                                                                   
+  config.vm.provision "shell", inline: "echo 'Hello...'"
+  config.vm.provision :shell, path: "bootstrap.sh"
+
+  config.vm.define "brittany" do |brittany|
+    brittany.vm.box = "ubuntu/trusty64"
+    brittany.vm.synced_folder "brittany/", "/shared", create: true
+    brittany.vm.provision "shell", inline: "echo '... from Brittany!'"
+    brittany.vm.network "forwarded_port", guest: 80, host: 8000
+  end
+
+  config.vm.define "japan" do |japan|
+    japan.vm.box = "ubuntu/trusty64"
+    japan.vm.synced_folder "japan/", "/shared", create: true
+    japan.vm.provision "shell", inline: "echo '... from Japan!'"
+    japan.vm.network "forwarded_port", guest: 80, host: 8001
+  end
 end
